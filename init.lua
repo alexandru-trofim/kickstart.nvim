@@ -84,6 +84,8 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+-- Here I moved the options from the init.lua to options.lua
+require 'options'
 -- -- Set <space> as the leader key
 -- -- See `:help mapleader`
 -- --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
