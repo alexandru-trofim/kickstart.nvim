@@ -1,5 +1,6 @@
 require 'options'
 require 'keymaps'
+-- require 'custom-functions'
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -9,30 +10,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Here will the my custom functions for md files
--- Function to open files referenced as [[<string>]] under cursor
-local function open_bracketed_file()
-  local text = vim.api.nvim_get_current_line()
+local custom_functions = require 'custom-functions'
 
-  -- Match the string between square brackets
-  local pattern = '%[%[.+%]%]'
-
-  -- Use string.match to find the first capture
-  local captured_string = string.match(text, pattern)
-
-  if captured_string then
-    -- Access the captured string (inside [[ ]])
-    captured_string = string.sub(captured_string, 3, -3)
-    print(captured_string)
-  else
-    print 'No string found within double square brackets'
-  end
-
-  -- Build and execute the edit command
-  vim.api.nvim_command(':e ' .. captured_string .. '.md')
-end
-
-vim.keymap.set('n', '<leader>o', open_bracketed_file)
+vim.keymap.set('n', '<leader>o', custom_functions.open_bracketed_file)
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -326,7 +306,7 @@ require('lazy').setup({
   { -- Autoformat
     'stevearc/conform.nvim',
     opts = {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
@@ -340,7 +320,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'isort', 'black' },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -475,8 +455,6 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
-      require('mini.files').setup()
-
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
@@ -500,7 +478,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'python' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
